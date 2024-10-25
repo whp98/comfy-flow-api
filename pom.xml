@@ -111,6 +111,11 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.2.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -144,7 +149,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <maven.home>${maven.home}</maven.home>
+                       <!-- <maven.home>${maven.home}</maven.home>-->
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -164,7 +169,7 @@
                         <native.image.path>${project.build.directory}/${project.build.finalName}-runner
                         </native.image.path>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <maven.home>${maven.home}</maven.home>
+                       <!-- <maven.home>${maven.home}</maven.home>-->
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

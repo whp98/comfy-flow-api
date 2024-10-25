@@ -28,8 +28,8 @@
         let formData = new FormData();
         let file = document.getElementById('file');
         formData.append('file', file.files[0]);
-        formData.append('openId', '123');
-        formData.append('flowName', '我的工作流AAA');
+        formData.append('openId', self.crypto.randomUUID());
+        formData.append('flowName', 'flux生图-workflow_api');
         formData.append('prompt', value);
         xhr.send(formData);
       })

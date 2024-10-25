@@ -118,7 +118,7 @@ public class ComfyResource {
         LOGGER.info("推送工作流任务到服务端:{},{}", pushVo.getOpenid(), pushVo.getFlowName());
         List<FlowVo> flowVos = getFlowVos();
         String json = getFlow(pushVo.getFlowName(), flowVos);
-        final String comfyIp = getComfyIp();
+        final String comfyIp = getComfyIpPort();
         final long send = RandomUtil.randomLong(1L, 8_446_744_073_709_551_614L);
         final String image = uploadComfyFile(comfyIp, pushVo.getFile());
         json = StrUtil.replace(json, "___seed___", String.valueOf(send));
@@ -134,10 +134,10 @@ public class ComfyResource {
                 }
                 """, pushVo.getOpenid(), json
         );
-        LOGGER.debug("ComfyUI-提交任务-请求:{}", postJson);
+        LOGGER.info("ComfyUI-提交任务-请求:{}", postJson);
         Response response = null;
         try (Client client = ClientUtils.buildClient()) {
-            Invocation.Builder builder = client.target("http://" + comfyIp + ":8188/prompt")
+            Invocation.Builder builder = client.target("http://" + comfyIp + "/prompt")
                 .request(MediaType.APPLICATION_JSON);
             response = builder.post(Entity.entity(postJson, MediaType.APPLICATION_JSON));
             String str = response.readEntity(String.class);
@@ -209,7 +209,7 @@ public class ComfyResource {
         List<ComfyImageVo> comfyImageVos = Lists.newArrayList();
         Response response = null;
         try (Client client = ClientUtils.buildClient()) {
-            Invocation.Builder builder = client.target("http://" + comfyIp + ":8188/history/" + prompt_id)
+            Invocation.Builder builder = client.target("http://" + comfyIp + "/history/" + prompt_id)
                 .request(MediaType.APPLICATION_JSON);
             response = builder.get();
             JsonObject resp = response.readEntity(JsonObject.class);
@@ -271,7 +271,7 @@ public class ComfyResource {
         Response response = null;
         try (Client client = ClientUtils.buildClient()) {
             client.register(MultipartEntityPartWriter.class);
-            WebTarget target = client.target("http://" + comfyIp + ":8188/upload/image");
+            WebTarget target = client.target("http://" + comfyIp + "/upload/image");
             EntityPart entityPart = EntityPart.withName("image")
                 .fileName(file.getFileName())
                 .content(file.getBody())
@@ -306,7 +306,7 @@ public class ComfyResource {
         return result;
     }
 
-    private String getComfyIp() {
+    private String getComfyIpPort() {
         // TODO 随机分配IP，如果需要更好的算力分配方法，可以在这里编写.
         List<String> ips = comfyProperties.ips();
         String ip = RandomUtil.randomEle(ips);
@@ -316,7 +316,7 @@ public class ComfyResource {
     private String getImageUrl(String comfyIp, String subfolder, String filename, String type) {
         // TODO 这里的图片可以存储到云上
         return StrUtil.format(
-            "http://{}:8188/view?filename={}&subfolder={}&type={}",
+            "http://{}/view?filename={}&subfolder={}&type={}",
             comfyIp, filename, subfolder, type
         );
     }
